@@ -1,8 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Scale } from 'lucide-react';
+import { Scale, Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 export function Header() {
   const location = useLocation();
+  const [open, setOpen] = useState(false);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -16,16 +18,21 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
+
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <Scale className="w-8 h-8 text-primary transition-transform group-hover:scale-110" />
             <div>
-              <div className="text-xl font-serif font-semibold text-foreground">Sterling & Associates</div>
-              <div className="text-xs text-muted-foreground tracking-wider">ATTORNEYS AT LAW</div>
+              <div className="text-xl font-serif font-semibold text-foreground">
+                Sterling & Associates
+              </div>
+              <div className="text-xs text-muted-foreground tracking-wider">
+                ATTORNEYS AT LAW
+              </div>
             </div>
           </Link>
 
-          {/* Navigation */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
@@ -49,15 +56,51 @@ export function Header() {
             ))}
           </nav>
 
-          {/* CTA Button */}
+          {/* Desktop CTA */}
           <Link
             to="/contact"
             className="hidden lg:block px-6 py-2.5 bg-primary text-primary-foreground font-medium tracking-wide transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
           >
             Book Consultation
           </Link>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="md:hidden text-foreground"
+          >
+            {open ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {open && (
+        <div className="md:hidden bg-background border-t border-border px-6 py-6 flex flex-col gap-6 shadow-lg">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              onClick={() => setOpen(false)}
+              className={`text-base ${
+                location.pathname === link.path
+                  ? 'text-primary'
+                  : 'text-foreground'
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
+
+          <Link
+            to="/contact"
+            onClick={() => setOpen(false)}
+            className="mt-4 px-6 py-3 bg-primary text-primary-foreground text-center font-medium"
+          >
+            Book Consultation
+          </Link>
+        </div>
+      )}
     </header>
   );
 }
